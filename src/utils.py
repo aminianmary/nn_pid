@@ -150,8 +150,9 @@ def add_to_minibatch(batch, max_char_len, max_w_len, mini_batches, model):
         [model.pos_dict.get(batch[i][j].pos, model.unk_id) if j < len(batch[i]) else model.PAD for i in
          range(num_sen)]) for j in range(max_w_len)])
 
-    # For all characters in all words in all sentences, put them all in a tensor except the ones that are outside the boundary of the sentence.
-    # todo: fix this for other branches as well.
+    # For all characters in all words in all sentences, put them all in a tensor except the ones that are
+    # outside the boundary of the sentence.
+
     chars = [list() for _ in range(max_char_len)]
     for c_position in range(max_char_len):
         ch = [model.PAD]*(num_sen * max_w_len)
@@ -159,7 +160,7 @@ def add_to_minibatch(batch, max_char_len, max_w_len, mini_batches, model):
         for word_position in range(max_w_len):
             for sen_position in range(num_sen):
                 if word_position<len(batch[sen_position]) and c_position<len(batch[sen_position][word_position].norm):
-                    ch[offset] = model.char_dict.get(batch[sen_position][word_position].norm[c_position], model.unk_id)
+                    ch[offset] = model.char_dict.get(batch[sen_position][word_position].norm[c_position].lower(), model.unk_id)
                 offset+=1
         chars[c_position] = np.array(ch)
     chars = np.array(chars)

@@ -136,7 +136,7 @@ class SRLLSTM:
             if (b+1)%part_size==0:
                 part+=1
 
-                if dev_path != '':
+                if dev_path != None:
                     start = time.time()
                     write_conll(os.path.join(options.outdir, options.model) + str(epoch + 1) + "_" + str(part)+ '.txt',
                                 self.Predict(dev_path))

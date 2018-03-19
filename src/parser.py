@@ -7,7 +7,7 @@ from optparse import OptionParser
 if __name__ == '__main__':
     parser = OptionParser()
     parser.add_option("--train", dest="conll_train", help="Annotated CONLL train file", metavar="FILE", default=None)
-    parser.add_option("--dev", dest="conll_dev", help="Annotated CONLL dev file", metavar="FILE", default='')
+    parser.add_option("--dev", dest="conll_dev", help="Annotated CONLL dev file", metavar="FILE", default=None)
     parser.add_option("--input", dest="input", help="Annotated CONLL test file", metavar="FILE", default=None)
     parser.add_option("--inputdir", dest="inputdir", help="Directory containing test files", metavar="FILE",
                       default=None)
@@ -66,23 +66,8 @@ if __name__ == '__main__':
             print 'Starting epoch', epoch
             best_acc = parser.Train(utils.get_batches(buckets, parser, True), epoch, best_acc, options)
             print 'best Accuracy after finishing the epoch: ' + str(best_acc)
-
-            '''
-            if options.conll_dev != '':
-                start = time.time()
-                utils.write_conll(os.path.join(options.outdir, options.model) + str(epoch + 1) + '.txt',
-                                  parser.Predict(options.conll_dev))
-                os.system('perl src/utils/eval.pl -g ' + options.conll_dev + ' -s ' + os.path.join(options.outdir,options.model) + str(epoch + 1) + '.txt' + ' > ' + os.path.join(options.outdir, options.model) + str(epoch + 1) + '.eval')
-                print 'Finished predicting dev; time:', time.time() - start
-                labeled_f, unlabeled_f = utils.get_scores(os.path.join(options.outdir, options.model) + str(epoch + 1) + '.eval')
-                print 'epoch: ' + str(epoch) + '-- labeled F1: ' + str(labeled_f) + ' Unlabaled F: ' + str(unlabeled_f)
-                if float(labeled_f) > best_f_score:
-                    parser.Save(os.path.join(options.outdir, options.model))
-                    best_f_score = float(labeled_f)
-                    best_epoch = epoch
-
-        print 'Best epoch: ' + str(best_epoch)
-        '''
+        if options.conll_dev == None:
+            parser.Save(os.path.join(options.outdir, options.model))
 
     if options.input and options.output:
         with open(os.path.join(options.outdir, options.params), 'r') as paramsfp:
